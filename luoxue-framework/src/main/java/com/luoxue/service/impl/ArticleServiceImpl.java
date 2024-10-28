@@ -10,10 +10,8 @@ import com.luoxue.domin.vo.HotArticleVo;
 import com.luoxue.mapper.ArticleMapper;
 import com.luoxue.service.ArticleService;
 import com.luoxue.utils.BeanCopyUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
