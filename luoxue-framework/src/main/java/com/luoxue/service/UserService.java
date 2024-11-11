@@ -1,5 +1,6 @@
 package com.luoxue.service;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.entity.User;
 
 /**
@@ -9,5 +10,10 @@ import com.luoxue.domin.entity.User;
  * @since 2024-11-07 20:37:14
  */
 public interface UserService extends IService<User> {
+    ResponseResult userInfo();
+
+    ResponseResult updateUserInfo(User user);
+
+    ResponseResult register(User user);
 }
 

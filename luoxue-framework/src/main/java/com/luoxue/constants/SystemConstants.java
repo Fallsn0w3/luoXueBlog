@@ -15,4 +15,11 @@ public class SystemConstants
     * 友链审核通过
     * */
     public static final int  LINK_STATUS_NORMAL=0;
-}
+    /*文章评论
+    * */
+    public static final String ATICLE_COMMENT = "0";
+    /*
+    * 友链评论
+    * */
+    public static String Link_COMMENT="1";
+ }

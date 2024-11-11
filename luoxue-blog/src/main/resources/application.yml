@@ -20,3 +20,8 @@ mybatis-plus:
       logic-delete-value: 1
       logic-not-delete-value: 0
       id-type: auto
+qiniuyun:
+  oss:
+    accessKey: AjdfuNwDD273PM_2gHX9Pz80zyS3u115F1lUifCy
+    secretKey: -rnWenNwqKnEh5p8VL-nio0mkr7KCcC2OgtVa080
+    bucket: luox-blog
