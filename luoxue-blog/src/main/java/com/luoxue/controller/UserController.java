@@ -1,5 +1,6 @@
 package com.luoxue.controller;
 
+import com.luoxue.annotation.SystemLog;
 import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.entity.User;
 import com.luoxue.service.UserService;
@@ -16,6 +17,7 @@ public class UserController {
         return userService.userInfo();
     }
     @PutMapping("/userInfo")
+    @SystemLog(businessName="更新用户信息")
     public ResponseResult updateUserInfo(@RequestBody User user){
         return userService.updateUserInfo(user);
     }
