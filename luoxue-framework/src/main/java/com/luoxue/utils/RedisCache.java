@@ -235,4 +235,8 @@ public class RedisCache
     {
         return redisTemplate.keys(pattern);
     }
+    public void incrementCacheMapValue(String key,String hKey,int id){
+        redisTemplate.opsForHash().increment(key, hKey, id);
+    }
+
 }
