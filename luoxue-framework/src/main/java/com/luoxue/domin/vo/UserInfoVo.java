@@ -1,4 +1,4 @@
-package com.luoxue.domin.entity;
+package com.luoxue.domin.vo;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

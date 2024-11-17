@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.entity.User;
-import com.luoxue.domin.entity.UserInfoVo;
+import com.luoxue.domin.vo.UserInfoVo;
 import com.luoxue.enums.AppHttpCodeEnum;
 import com.luoxue.exception.SystemException;
 import com.luoxue.mapper.UserMapper;

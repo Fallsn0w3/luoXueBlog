@@ -1,25 +1,23 @@
 package com.luoxue.service.impl;
 
 import com.luoxue.domin.ResponseResult;
-import com.luoxue.domin.vo.BlogUserLoginVo;
 import com.luoxue.domin.entity.LoginUser;
 import com.luoxue.domin.entity.User;
-import com.luoxue.domin.vo.UserInfoVo;
-import com.luoxue.service.BlogLoginService;
-import com.luoxue.utils.BeanCopyUtils;
+import com.luoxue.service.AdminLoginService;
 import com.luoxue.utils.JwtUtil;
 import com.luoxue.utils.RedisCache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 @Service
-public class BlogLoginServiceImpl implements BlogLoginService {
+public class AdminLoginServiceImpl implements AdminLoginService {
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -38,23 +36,11 @@ public class BlogLoginServiceImpl implements BlogLoginService {
         String userid = loginUser.getUser().getId().toString();
         String jwt = JwtUtil.createJWT(userid);
         //用户信息存入redis
-        redisCache.setCacheObject("bloglogin:"+userid,loginUser);
+        redisCache.setCacheObject("login:"+userid,loginUser);
 
-        //把token和userinfo封装返回
-        UserInfoVo userInfoVo = BeanCopyUtils.beanCopy(loginUser.getUser(), UserInfoVo.class);
-        BlogUserLoginVo blogUserLoginVo = new BlogUserLoginVo(jwt,userInfoVo);
-        return ResponseResult.okResult(blogUserLoginVo);
-    }
-
-    @Override
-    public ResponseResult logout() {
-        //获取token，解析获取userid
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
-        //获取userid
-        Long userId = loginUser.getUser().getId();
-        //删除redis中的用户信息
-        redisCache.deleteObject("bloglogin:"+userId);
-        return ResponseResult.okResult();
+        //把token封装返回
+        Map<String,String> map=new HashMap<>();
+        map.put("token",jwt);
+        return ResponseResult.okResult(map);
     }
 }

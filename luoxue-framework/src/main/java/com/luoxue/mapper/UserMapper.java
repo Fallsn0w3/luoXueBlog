@@ -9,5 +9,6 @@ import com.luoxue.domin.entity.User;
  * @since 2024-11-06 20:22:41
  */
 public interface UserMapper extends BaseMapper<User> {
+    
 }
 

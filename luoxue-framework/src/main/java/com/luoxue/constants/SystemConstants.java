@@ -22,4 +22,6 @@ public class SystemConstants
     * 友链评论
     * */
     public static String Link_COMMENT="1";
+    public static String MENU="C";
+    public static String BUTTON="F";
  }
