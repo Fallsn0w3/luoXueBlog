@@ -1,15 +1,18 @@
 package com.luoxue.service.impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.entity.LoginUser;
 import com.luoxue.domin.entity.User;
 import com.luoxue.service.AdminLoginService;
 import com.luoxue.utils.JwtUtil;
 import com.luoxue.utils.RedisCache;
+import com.luoxue.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -17,7 +20,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Service
-public class AdminLoginServiceImpl implements AdminLoginService {
+public class AdminLoginServiceImpl implements AdminLoginService  {
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -42,5 +45,18 @@ public class AdminLoginServiceImpl implements AdminLoginService {
         Map<String,String> map=new HashMap<>();
         map.put("token",jwt);
         return ResponseResult.okResult(map);
+    }
+
+    @Override
+    public ResponseResult logout() {
+        //获取token，解析获取userid
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        LoginUser loginUser = (LoginUser) authentication.getPrincipal();
+        //获取userid
+//        Long userId = loginUser.getUser().getId();
+        Long userId = SecurityUtils.getUserId();
+        //删除redis中的用户信息
+        redisCache.deleteObject("login:"+userId);
+        return ResponseResult.okResult();
     }
 }

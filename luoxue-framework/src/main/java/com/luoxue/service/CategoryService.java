@@ -11,5 +11,7 @@ import com.luoxue.domin.entity.Category;
  */
 public interface CategoryService extends IService<Category> {
     ResponseResult<Category> getCategoryList();
+
+    ResponseResult listAllCategory();
 }
 

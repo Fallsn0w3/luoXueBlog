@@ -4,11 +4,13 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.luoxue.constants.SystemConstants;
 import com.luoxue.domin.entity.Menu;
+import com.luoxue.domin.vo.MenuVo;
 import com.luoxue.mapper.MenuMapper;
 import com.luoxue.service.MenuService;
+import com.luoxue.utils.BeanCopyUtils;
+import com.luoxue.utils.SecurityUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +39,36 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         }
         //否则返回该用户具有的权限信息
         return getBaseMapper().selectPermsByUserId(id);
+    }
+
+    @Override
+    public List<MenuVo> selectRoutersByUserId(Long userId) {
+        MenuMapper menuMapper = getBaseMapper();
+        List<Menu> menus =null;
+        if(SecurityUtils.isAdmin()){
+            menus = menuMapper.selectAllRouterMenu();
+        }else{
+            menus = menuMapper.selectRouterMenuTreeByUserId(userId);
+        }
+        List<MenuVo> menuTree = buildMenuTree(menus,0L);
+        return menuTree;
+    }
+    private List<MenuVo> buildMenuTree(List<Menu> menus, long parentId) {
+        List<MenuVo> menuVos = BeanCopyUtils.beanCopyList(menus, MenuVo.class);
+        List<MenuVo> menuTree = menuVos.stream()
+                .filter(menuVo -> menuVo.getParentId().equals(parentId))
+                .map(menuVo -> menuVo.setChildren(getChildren(menuVo,menuVos)))
+                .collect(Collectors.toList());
+        return menuTree;
+
+    }
+
+    private List<MenuVo> getChildren(MenuVo menuVo, List<MenuVo> menuVos) {
+        List<MenuVo> children = menuVos.stream()
+                .filter(m -> m.getParentId().equals(menuVo.getId()))
+                .map(m -> m.setChildren(getChildren(m, menuVos)))
+                .collect(Collectors.toList());
+        return children;
     }
 }
 

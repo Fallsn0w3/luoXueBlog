@@ -2,8 +2,11 @@ package com.luoxue.controller;
 
 import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.entity.LoginUser;
+import com.luoxue.domin.entity.Menu;
 import com.luoxue.domin.entity.User;
 import com.luoxue.domin.vo.AdminUserInfoVo;
+import com.luoxue.domin.vo.MenuVo;
+import com.luoxue.domin.vo.RoutersVo;
 import com.luoxue.domin.vo.UserInfoVo;
 import com.luoxue.enums.AppHttpCodeEnum;
 import com.luoxue.exception.SystemException;
@@ -49,8 +52,14 @@ public class AdminLoginController {
         AdminUserInfoVo adminUserInfoVo = new AdminUserInfoVo(perms, roles, userInfoVo);
         return ResponseResult.okResult(adminUserInfoVo);
     }
-//    @PostMapping("/logout")
-//    public ResponseResult logout() {
-//        return blogLoginService.logout();
-//    }
+    @GetMapping("/getRouters")
+    public ResponseResult<RoutersVo> getRouters() {
+        Long userId = SecurityUtils.getUserId();
+        List<MenuVo> menus = menuService.selectRoutersByUserId(userId);
+        return ResponseResult.okResult(new RoutersVo(menus));
+    }
+    @PostMapping("/user/logout")
+    public ResponseResult logout() {
+        return adminLoginService.logout();
+    }
 }

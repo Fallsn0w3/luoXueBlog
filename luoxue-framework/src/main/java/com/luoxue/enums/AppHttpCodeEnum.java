@@ -18,6 +18,7 @@ public enum AppHttpCodeEnum {
     EMAIL_NOT_NULL(510,"邮箱不能为空"),
     NICKNAME_NOT_NULL(511,"昵称不能为空"),
     NICKNAME_EXIST(512, "昵称已存在"),
+    TAG_NOT_NULL(513, "标签名或备注不能为空"),
     LOGIN_ERROR(505, "用户名或密码错误");
 
     int code;

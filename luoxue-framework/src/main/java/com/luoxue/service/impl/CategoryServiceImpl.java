@@ -6,6 +6,7 @@ import com.luoxue.constants.SystemConstants;
 import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.entity.Article;
 import com.luoxue.domin.entity.Category;
+import com.luoxue.domin.vo.CategoryAdminVo;
 import com.luoxue.domin.vo.CategoryVo;
 import com.luoxue.mapper.CategoryMapper;
 import com.luoxue.service.ArticleService;
@@ -43,6 +44,15 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         List<CategoryVo> categoryVos = BeanCopyUtils.beanCopyList(categories, CategoryVo.class);
 
         return ResponseResult.okResult(categoryVos);
+    }
+
+    @Override
+    public ResponseResult listAllCategory() {
+        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Category::getStatus, SystemConstants.STATUS_NORMAL);
+        List<Category> categories = list(wrapper);
+        List<CategoryAdminVo> categoryAdminVos = BeanCopyUtils.beanCopyList(categories, CategoryAdminVo.class);
+        return ResponseResult.okResult(categoryAdminVos);
     }
 }
 

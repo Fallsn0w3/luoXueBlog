@@ -1,10 +1,12 @@
 package com.luoxue.domin.entity;
+
 import java.util.Date;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.baomidou.mybatisplus.annotation.TableName;
+
 /**
  * (Category)表实体类
  *
@@ -17,14 +19,14 @@ import com.baomidou.mybatisplus.annotation.TableName;
 @NoArgsConstructor
 @TableName("lx_category")
 public class Category {
-private Long id;
-private String name;
-private Long pid;
-private String description;
-private String status;
-private Long createBy;
-private Date createTime;
-private Long updateBy;
-private Date updateTime;
-private Integer delFlag;
+    private Long id;
+    private String name;
+    private Long pid;
+    private String description;
+    private String status;
+    private Long createBy;
+    private Date createTime;
+    private Long updateBy;
+    private Date updateTime;
+    private Integer delFlag;
 }
