@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 
@@ -21,7 +22,9 @@ import java.io.Serializable;
 @TableName("lx_article_tag")
 public class ArticleTag implements Serializable {
     //文章id
+    @TableField
     private Long articleId;
     //标签id
+    @TableField
     private Long tagId;
 }

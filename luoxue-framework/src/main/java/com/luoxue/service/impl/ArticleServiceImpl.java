@@ -6,26 +6,27 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.luoxue.constants.SystemConstants;
 import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.dto.AddArticleDto;
+import com.luoxue.domin.dto.ArticleListDto;
+import com.luoxue.domin.dto.UpdateArticleDto;
 import com.luoxue.domin.entity.Article;
 import com.luoxue.domin.entity.ArticleTag;
 import com.luoxue.domin.entity.Category;
-import com.luoxue.domin.vo.ArticleDetailVo;
-import com.luoxue.domin.vo.ArticleListVo;
-import com.luoxue.domin.vo.HotArticleVo;
-import com.luoxue.domin.vo.PageVo;
+import com.luoxue.domin.entity.Tag;
+import com.luoxue.domin.vo.*;
 import com.luoxue.mapper.ArticleMapper;
 import com.luoxue.service.ArticleService;
 import com.luoxue.service.ArticleTagService;
 import com.luoxue.service.CategoryService;
 import com.luoxue.utils.BeanCopyUtils;
 import com.luoxue.utils.RedisCache;
+import io.opentracing.tag.Tags;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,6 +37,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     private RedisCache redisCache;
     @Autowired
     private ArticleTagService articleTagService;
+    @Autowired
+    private ArticleService articleService;
     @Override
     public ResponseResult hotArticle() {
         LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
@@ -110,6 +113,51 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 .map(tagId -> new ArticleTag(addArticle.getId(), tagId))
                 .collect(Collectors.toList());
         articleTagService.saveBatch(articleTags);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult listArticle(Integer pageNum, Integer pageSize, ArticleListDto articleListDto) {
+        LambdaQueryWrapper<Article> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Article::getStatus, SystemConstants.ARTICLE_STATUS_NORMAL);
+        queryWrapper.eq(StringUtils.hasText(articleListDto.getSummary()),Article::getSummary, articleListDto.getSummary());
+        queryWrapper.eq(StringUtils.hasText(articleListDto.getTitle()),Article::getTitle, articleListDto.getTitle());
+        Page<Article> articlePage = this.page(new Page<>(pageNum, pageSize), queryWrapper);
+        List<AdmainArticleVo> admainArticleVos = BeanCopyUtils.beanCopyList(articlePage.getRecords(), AdmainArticleVo.class);
+        PageVo pageVo = new PageVo(admainArticleVos, articlePage.getTotal());
+        return ResponseResult.okResult(pageVo);
+    }
+
+    @Override
+    public ResponseResult getArticleById(Integer id) {
+        Article article = articleService.getById(id);
+        LambdaQueryWrapper<ArticleTag> queryWrapper1 = new LambdaQueryWrapper<>();
+        queryWrapper1.eq(ArticleTag::getArticleId, id);
+        List<Long> tagIds = articleTagService.list(queryWrapper1).stream()
+                .map(ArticleTag::getTagId)
+                .collect(Collectors.toList());
+        AdmainArticleListVo admainArticleListVo = BeanCopyUtils.beanCopy(article, AdmainArticleListVo.class);
+        admainArticleListVo.setTags(tagIds);
+        return ResponseResult.okResult(admainArticleListVo);
+    }
+
+    @Override
+    public ResponseResult updateArticle(UpdateArticleDto articleDto) {
+        Article article = BeanCopyUtils.beanCopy(articleDto, Article.class);
+        updateById(article);
+        LambdaQueryWrapper<ArticleTag> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ArticleTag::getArticleId, articleDto.getId());
+        articleTagService.remove(queryWrapper);
+        List<ArticleTag> articleTags = articleDto.getTags().stream()
+                .map(tagId -> new ArticleTag(article.getId(), tagId))
+                .collect(Collectors.toList());
+        articleTagService.saveBatch(articleTags);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult deleteArticle(Integer id) {
+        articleService.removeById(id);
         return ResponseResult.okResult();
     }
 }

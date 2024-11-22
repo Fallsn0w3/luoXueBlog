@@ -18,7 +18,8 @@ public class SystemConstants
     /*文章评论
     * */
     public static final String ATICLE_COMMENT = "0";
-    /*
+     public static final String ADMAIN = "1";
+     /*
     * 友链评论
     * */
     public static String Link_COMMENT="1";

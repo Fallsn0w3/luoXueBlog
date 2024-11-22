@@ -1,5 +1,6 @@
 package com.luoxue.service;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.entity.Role;
 
 import java.util.List;
@@ -13,5 +14,9 @@ import java.util.List;
 public interface RoleService extends IService<Role> {
 
     List<String> selectRoleKeyByUserId(Long id);
+
+    ResponseResult list(Integer pageNum, Integer pageSize, String roleName, String status);
+
+    ResponseResult updateStatus(Long roleId, String status);
 }
 
