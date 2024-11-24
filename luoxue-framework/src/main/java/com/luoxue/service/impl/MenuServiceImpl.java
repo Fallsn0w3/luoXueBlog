@@ -5,12 +5,15 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.luoxue.constants.SystemConstants;
 import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.entity.Menu;
+import com.luoxue.domin.entity.RoleMenu;
 import com.luoxue.domin.vo.MenuAdminListVo;
 import com.luoxue.domin.vo.MenuGetByIdVo;
 import com.luoxue.domin.vo.MenuVo;
+import com.luoxue.domin.vo.RoleMenuUpdateVo;
 import com.luoxue.enums.AppHttpCodeEnum;
 import com.luoxue.mapper.MenuMapper;
 import com.luoxue.service.MenuService;
+import com.luoxue.service.RoleMenuService;
 import com.luoxue.utils.BeanCopyUtils;
 import com.luoxue.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -30,6 +34,10 @@ import java.util.stream.Collectors;
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
     @Autowired
     private MenuMapper menuMapper;
+    @Autowired
+    private MenuService menuService;
+    @Autowired
+    private RoleMenuService roleMenuService;
     @Override
     public List<String> selectPermsByUserId(Long id) {
         //如果是管理员返回所有权限信息
@@ -111,6 +119,19 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         List<Menu> list = list(queryWrapper);
         List<MenuAdminListVo> menus= buildMenuTreeList(list,0L);
         return ResponseResult.okResult(menus);
+    }
+
+    @Override
+    public ResponseResult roleMenuTree(Long id) {
+        List<MenuAdminListVo> menus = (List<MenuAdminListVo>) menuService.treeselect().getData();
+        LambdaQueryWrapper<RoleMenu> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(RoleMenu::getRoleId,id);
+        List<RoleMenu> list = roleMenuService.list(queryWrapper);
+        List<Long> menuIds = list.stream()
+                .map(roleMenu -> roleMenu.getMenuId())
+                .collect(Collectors.toList());
+        RoleMenuUpdateVo roleMenuUpdateVo = new RoleMenuUpdateVo(menus, menuIds);
+        return ResponseResult.okResult(roleMenuUpdateVo);
     }
 
     private List<MenuAdminListVo> buildMenuTreeList(List<Menu> list, long parentId) {
