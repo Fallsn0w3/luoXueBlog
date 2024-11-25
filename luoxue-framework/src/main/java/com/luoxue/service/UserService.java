@@ -2,6 +2,7 @@ package com.luoxue.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.dto.AddUserDto;
+import com.luoxue.domin.dto.UpdateUserDto;
 import com.luoxue.domin.entity.User;
 
 /**
@@ -22,5 +23,9 @@ public interface UserService extends IService<User> {
     ResponseResult add(AddUserDto addUserDto);
 
     ResponseResult delete(Long id);
+
+    ResponseResult getUserDetail(Long id);
+
+    ResponseResult updateUser(UpdateUserDto updateUserDto);
 }
 

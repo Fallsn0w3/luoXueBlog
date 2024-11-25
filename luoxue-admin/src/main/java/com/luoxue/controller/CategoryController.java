@@ -4,6 +4,7 @@ import com.alibaba.excel.EasyExcel;
 import com.alibaba.fastjson.JSON;
 import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.entity.Category;
+import com.luoxue.domin.vo.CategoryListVo;
 import com.luoxue.domin.vo.ExcelCategoryVo;
 import com.luoxue.enums.AppHttpCodeEnum;
 import com.luoxue.service.CategoryService;
@@ -11,9 +12,7 @@ import com.luoxue.utils.BeanCopyUtils;
 import com.luoxue.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
@@ -44,5 +43,21 @@ public class CategoryController {
             ResponseResult result = ResponseResult.errorResult(AppHttpCodeEnum.SYSTEM_ERROR);
             WebUtils.renderString(response, JSON.toJSONString(result));
         }
+    }
+    @GetMapping("/list")
+    public ResponseResult list( Integer pageNum,Integer pageSize,String name,String status) {
+        return categoryService.list(pageNum,pageSize,name,status);
+    }
+    @PostMapping
+    public ResponseResult add(@RequestBody Category category) {
+        return categoryService.add(category);
+    }
+    @PutMapping
+    public ResponseResult update(@RequestBody CategoryListVo category) {
+        return categoryService.update(category);
+    }
+    @DeleteMapping("/{id}")
+    public ResponseResult delete(@PathVariable Long id) {
+        return categoryService.delete(id);
     }
 }

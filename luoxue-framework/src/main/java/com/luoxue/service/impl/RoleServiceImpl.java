@@ -112,5 +112,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         wrapper.eq(Role::getStatus, SystemConstants.ARTICLE_STATUS_NORMAL);
         return ResponseResult.okResult(roleMapper.selectList(wrapper));
     }
+
+    public List<Role> selectRoleByUserId(Long id) {
+        return getBaseMapper().selectRoleByUserId(id);
+    }
 }
 

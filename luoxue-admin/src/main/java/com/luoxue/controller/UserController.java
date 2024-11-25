@@ -2,6 +2,7 @@ package com.luoxue.controller;
 
 import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.dto.AddUserDto;
+import com.luoxue.domin.dto.UpdateUserDto;
 import com.luoxue.domin.entity.User;
 import com.luoxue.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,13 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseResult delete(@PathVariable("id") Long id){
         return userService.delete(id);
+    }
+    @GetMapping("/{id}")
+    public ResponseResult getUserDetail(@PathVariable("id") Long id){
+        return userService.getUserDetail(id);
+    }
+    @PutMapping
+    public ResponseResult updateUser(@RequestBody UpdateUserDto updateUserDto){
+        return userService.updateUser(updateUserDto);
     }
 }

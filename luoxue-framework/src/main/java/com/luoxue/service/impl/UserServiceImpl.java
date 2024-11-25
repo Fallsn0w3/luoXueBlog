@@ -5,9 +5,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.luoxue.domin.ResponseResult;
 import com.luoxue.domin.dto.AddUserDto;
+import com.luoxue.domin.dto.UpdateUserDto;
+import com.luoxue.domin.entity.Role;
 import com.luoxue.domin.entity.User;
 import com.luoxue.domin.entity.UserRole;
 import com.luoxue.domin.vo.PageVo;
+import com.luoxue.domin.vo.UserDetailVo;
 import com.luoxue.domin.vo.UserInfoVo;
 import com.luoxue.enums.AppHttpCodeEnum;
 import com.luoxue.exception.SystemException;
@@ -36,6 +39,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private PasswordEncoder passwordEncoder;
     @Autowired
     private UserRoleService userRoleService;
+    @Autowired
+    private RoleServiceImpl roleService;
+
     @Override
     public ResponseResult userInfo() {
         //获取当前用户id
@@ -129,6 +135,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     public ResponseResult delete(Long id) {
         removeById(id);
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult getUserDetail(Long id) {
+        User user = getById(id);
+        LambdaQueryWrapper<UserRole> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(UserRole::getUserId, id);
+        List<Long> roleIds = userRoleService.list(wrapper).stream()
+                .map(UserRole::getRoleId)
+                .collect(Collectors.toList());
+//        List<Role> roles = roleService.selectRoleByUserId(id);
+        List<Role> roles = roleService.list();
+        UserDetailVo userDetailVo = new UserDetailVo(user, roleIds, roles);
+        return ResponseResult.okResult(userDetailVo);
+    }
+
+    @Override
+    public ResponseResult updateUser(UpdateUserDto updateUserDto) {
+        User user = BeanCopyUtils.beanCopy(updateUserDto, User.class);
+        updateById(user);
+        userRoleService.removeById(updateUserDto.getId());
+        List<UserRole> userRoles = updateUserDto.getRoleIds().stream()
+                .map(roleId -> new UserRole(user.getId(), roleId))
+                .collect(Collectors.toList());
+        userRoleService.saveBatch(userRoles);
         return ResponseResult.okResult();
     }
 
